@@ -113,10 +113,10 @@ class User:
         input_password = input('Password: ').strip()
         while self.empty(input_password):
             self.clear()
-            print('Login', input_login)
+            print('Login', self.input_login)
             print("It's empty string please again")
             input_password = input('Password: ').strip()
-        self.show_log_in()
+        self.enter_log_in()
 
     def show_log_in(self):
         self.clear()
@@ -147,17 +147,29 @@ class User:
         if input_user == self.log_in_option[2]:
             self.change_password()
 
-        if input_user == self.log_in_option[2]:
+        if input_user == self.log_in_option[3]:
             self.del_acc()
 
     def change_login(self):
-        pass
+        old_log = input('Enter your old login: ').strip().lower()
+        new_log = input('Enter your new login: ').strip().lower()
+        mycursor.execute(f"update user set login='{new_log}' where login='{old_log}'")
+        mydb.commit()
+        print('Your login has been changed!')
 
     def change_password(self):
-        pass
+        old_pass = input('Enter your old password: ').strip()
+        new_pass = input('Enter your new password: ').strip()
+        mycursor.execute(f"update user set password='{new_pass}' where password='{old_pass}'")
+        mydb.commit()
+        print('Your password has been changed!')
+
 
     def del_acc(self):
-        pass
+        log = input('Enter your old password: ').strip().lower()
+        mycursor.execute(f"delete from user where login='{log}'")
+        mydb.commit()
+
 
     def check_log_registr(self, log):
         mycursor.execute(f"select login from user where login = '{log}';")
