@@ -9,6 +9,7 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
+
 class User:
     def __init__(self, name, login, password, age, gender):
         self.name = name
@@ -18,6 +19,8 @@ class User:
         self.gender = gender
         self.option = ['0', '1', '2']
         self.gen_option = ['0', '1']
+        self.log_in_option = ['0', '1', '2', '3']
+
 
     def show_menu(self):
         print('''
@@ -50,14 +53,15 @@ class User:
         exit()
 
     def register(self):
+
         input_name = input('Name: ').strip().capitalize()
         while self.empty(input_name):
             self.clear()
-            print("It's empty string please again")
+            print("It's empty string please again or such a login exists")
             input_name = input('Name: ').strip().capitalize()
 
         input_login = input('Login: ').strip().lower()
-        while self.empty(input_login):
+        while self.empty(input_login) or self.check_log_registr(input_login):
             self.clear()
             print('Name: ', input_name)
             print("It's empty string please again")
@@ -100,7 +104,68 @@ class User:
         mydb.commit()
 
     def log_in(self):
+        input_login = input('Login: ').strip().lower()
+        while self.empty(input_login) or not self.check_log_registr(input_login):
+            self.clear()
+            print("It's empty string please again")
+            input_login = input('Login: ').strip().lower()
+
+        input_password = input('Password: ').strip()
+        while self.empty(input_password):
+            self.clear()
+            print('Login', input_login)
+            print("It's empty string please again")
+            input_password = input('Password: ').strip()
+        self.show_log_in()
+
+    def show_log_in(self):
+        self.clear()
+        print('''
+            Welcome to Log in
+        [0] ---> Exit
+        [1] ---> Change login
+        [2] ---> Change password
+        [3] ---> Delete account
+        ''')
+
+    def enter_log_in(self):
+        self.clear()
+        self.show_log_in()
+        input_user = input('[0, 1, 2, 3]: ').strip()
+        while input_user not in self.log_in_option:
+            self.clear()
+            self.show_menu()
+            print('Invalid syntax!')
+            input_user = input('[0, 1, 2, 3]: ').strip()
+
+        if input_user == self.log_in_option[0]:
+            self.exitt()
+
+        if input_user == self.log_in_option[1]:
+            self.change_login()
+
+        if input_user == self.log_in_option[2]:
+            self.change_password()
+
+        if input_user == self.log_in_option[2]:
+            self.del_acc()
+
+    def change_login(self):
         pass
+
+    def change_password(self):
+        pass
+
+    def del_acc(self):
+        pass
+
+    def check_log_registr(self, log):
+        mycursor.execute(f"select login from user where login = '{log}';")
+        my_log = mycursor.fetchall()
+        if my_log:
+            return True
+        return False
+
 
     @staticmethod
     def clear():
@@ -109,6 +174,7 @@ class User:
     @staticmethod
     def empty(a):
         return not a
+
 
 dilshod = User('dilishod', 'shamshod', 'dili', 24, 1)
 dilshod.enter_sys()
